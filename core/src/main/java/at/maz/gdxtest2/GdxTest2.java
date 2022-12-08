@@ -205,7 +205,7 @@ public class GdxTest2 extends ApplicationAdapter {
         font.draw(batch, "Last" + ROLLINGACCURACYINTERVAL + ": " + 3.4f + "%", WORLD_WIDTH - 30, WORLD_HEIGHT - 2);
         font.draw(batch, shotsFired.stream().filter(shot -> shot.hit()).count() + "/" + shotsFired.size(), WORLD_WIDTH - 30, WORLD_HEIGHT - 5);
 
-        //debugSprite.draw(batch, cannon.getTopPosition());
+        //debugSprite.draw(batch, target.getPosition());
 
         batch.end();
     }

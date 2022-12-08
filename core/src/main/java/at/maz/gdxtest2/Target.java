@@ -16,17 +16,22 @@ public class Target {
     private final float WIDTH = 1.8f;
     private final float HEIGHT = 6f;
 
+    // Center point is used as origin
     private TargetPosition position;
 
     public enum TargetPosition {
-        POS0(new Vector2(0, 1)),
-        POS1(new Vector2(0, 10)),
-        POS2(new Vector2(0, 20)),
-        POS3(new Vector2(0, 30)),
-        POS4(new Vector2(0, 40)),
-        POS5(new Vector2(0, 50)),
-        POS6(new Vector2(0, 60)),
-        POS7(new Vector2(0, 70));
+        //TODO auto gen. in steps of HEIGHT?
+        POS0(new Vector2(0, 5)),
+        POS1(new Vector2(0, 12)),
+        POS2(new Vector2(0, 19)),
+        POS3(new Vector2(0, 26)),
+        POS4(new Vector2(0, 33)),
+        POS5(new Vector2(0, 40)),
+        POS6(new Vector2(0, 47)),
+        POS7(new Vector2(0, 54)),
+        POS8(new Vector2(0, 61)),
+        POS9(new Vector2(0, 68)),
+        POS10(new Vector2(0, 75));
 
         private final Vector2 pos;
 
@@ -54,7 +59,7 @@ public class Target {
     }
 
     public void draw(SpriteBatch batch) {
-        batch.draw(sprite, target.getPosition().x, target.getPosition().y, WIDTH, HEIGHT);
+        batch.draw(sprite, this.getPosition().x - WIDTH / 2, this.getPosition().y - HEIGHT / 2, WIDTH, HEIGHT);
     }
 
     public Vector2 getPosition() {
