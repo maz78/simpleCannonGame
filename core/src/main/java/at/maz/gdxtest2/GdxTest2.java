@@ -74,7 +74,6 @@ public class GdxTest2 extends ApplicationAdapter {
         batch = new SpriteBatch();
         batch.setProjectionMatrix(camera.combined);
         renderer = new Box2DDebugRenderer();
-        renderer.setDrawBodies(true); // Set true for debug
         world = new World(new Vector2(0, -10), true);
         this.contactListener = new ContactListenerImpl();
         world.setContactListener(contactListener);
@@ -82,6 +81,8 @@ public class GdxTest2 extends ApplicationAdapter {
         font.getData().setScale(0.06f, 0.06f);
         font.setColor(Color.FIREBRICK);
 
+        // Debug options
+        renderer.setDrawBodies(true);
         debugSprite = new DebugSprite();
 
         // Floor
@@ -115,6 +116,7 @@ public class GdxTest2 extends ApplicationAdapter {
 
         // Cannon
         cannon = new Cannon(new Vector2(WORLD_WIDTH * 0.95f, WORLD_HEIGHT * 0.09f));
+
         // Power bar
         powerBar = new PowerBar(new Vector2(WORLD_WIDTH * 0.4f, WORLD_HEIGHT * 0.003f), WORLD_WIDTH * 0.2f);
 
@@ -174,10 +176,11 @@ public class GdxTest2 extends ApplicationAdapter {
         }
 
         if (contactListener.isTargetHit()) {
-            // Last shot is a hit.
+            // Last shot is a hit, adapt list of shots.
             ListIterator listIterator = shotsFired.listIterator(shotsFired.size() - 1);
             listIterator.next();
             listIterator.set(new Shot(11f, powerPercent.getValue(), true));
+
             destroyBullet();
             target.clear();
             target = null;

@@ -11,7 +11,6 @@ public class Bullet {
 
     private final World world;
     private Body bullet;
-    //private Sprite bulletSprite = new Sprite(new Texture("bullet.png"));
     private Sprite bulletSprite = new Sprite(new Texture("bullet.png"));
 
     public Bullet(World world, Vector2 position, Vector2 impulse) {
