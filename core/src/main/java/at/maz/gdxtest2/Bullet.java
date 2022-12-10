@@ -10,8 +10,8 @@ public class Bullet {
     private final float BULLET_RADIUS = 0.7f;
 
     private final World world;
-    private Body bullet;
-    private Sprite bulletSprite = new Sprite(new Texture("bullet.png"));
+    private final Body bullet;
+    private final Sprite bulletSprite = new Sprite(new Texture("bullet.png"));
 
     public Bullet(World world, Vector2 position, Vector2 impulse) {
         this.world = world;

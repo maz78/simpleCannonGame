@@ -17,10 +17,10 @@ public class Target {
     private final float HEIGHT = 6f;
 
     // Center point is used as origin
-    private TargetPosition position;
+    private final TargetPosition position;
 
     public enum TargetPosition {
-        //TODO auto gen. in steps of HEIGHT?
+        // No random y-value for target, but distinct positions to make it easier for AI.
         POS0(new Vector2(0, 5)),
         POS1(new Vector2(0, 12)),
         POS2(new Vector2(0, 19)),

@@ -42,7 +42,7 @@ public class GdxTest2 extends ApplicationAdapter {
     private record Shot(float rotaion, float powerpercent, boolean hit) {
     }
 
-    private List<Shot> shotsFired = new ArrayList<>();
+    private final List<Shot> shotsFired = new ArrayList<>();
     private final int ROLLINGACCURACYINTERVAL = 20;
 
     private World world;
@@ -58,11 +58,12 @@ public class GdxTest2 extends ApplicationAdapter {
     private PowerBar powerBar;
     private Target target;
     private BitmapFont font;
+    private Cloud cloud;
 
     private float rotation = 45;
-    private PercentValue powerPercent = new PercentValue(60);
-    private float powerPercentKeyRepeat = 0;
-    private float rollingAccuracyPercent = 0;
+    private final PercentValue powerPercent = new PercentValue(60);
+    private final float powerPercentKeyRepeat = 0;
+    private final float rollingAccuracyPercent = 0;
 
     @Override
     public void create() {
@@ -120,6 +121,8 @@ public class GdxTest2 extends ApplicationAdapter {
         // Power bar
         powerBar = new PowerBar(new Vector2(WORLD_WIDTH * 0.4f, WORLD_HEIGHT * 0.003f), WORLD_WIDTH * 0.2f);
 
+        //Cloud
+        cloud = new Cloud(new Vector2(WORLD_WIDTH, WORLD_HEIGHT), batch);
 
         Gdx.input.setInputProcessor(new InputAdapter() {
             @Override
@@ -129,9 +132,7 @@ public class GdxTest2 extends ApplicationAdapter {
                     case Input.Keys.RIGHT -> rotating = Optional.of(false);
                     case Input.Keys.UP -> loadingPower = Optional.of(true);
                     case Input.Keys.DOWN -> loadingPower = Optional.of(false);
-                    case Input.Keys.SPACE -> {
-                        createNewBullet();
-                    }
+                    case Input.Keys.SPACE -> createNewBullet();
                 }
                 return true;
             }
@@ -149,7 +150,7 @@ public class GdxTest2 extends ApplicationAdapter {
 
     private void createNewBullet() {
         destroyBullet();
-        bullet = new Bullet(world, cannon.getTopPosition(), cannon.getShootingDirection().scl((float) 0.28f * (45 + powerPercent.getValue() * 0.45f)));
+        bullet = new Bullet(world, cannon.getTopPosition(), cannon.getShootingDirection().scl(0.28f * (45 + powerPercent.getValue() * 0.45f)));
         shotsFired.add(new Shot(rotation, powerPercent.getValue(), false));
     }
 
@@ -177,9 +178,14 @@ public class GdxTest2 extends ApplicationAdapter {
 
         if (contactListener.isTargetHit()) {
             // Last shot is a hit, adapt list of shots.
-            ListIterator listIterator = shotsFired.listIterator(shotsFired.size() - 1);
+            ListIterator<Shot> listIterator = shotsFired.listIterator(shotsFired.size() - 1);
             listIterator.next();
-            listIterator.set(new Shot(11f, powerPercent.getValue(), true));
+            try {
+                listIterator.set(new Shot(11f, powerPercent.getValue(), true));
+            } catch (UnsupportedOperationException | ClassCastException | IllegalArgumentException |
+                     IllegalStateException e) {
+                System.err.println("Can't record hits on shots. " + e);
+            }
 
             destroyBullet();
             target.clear();
@@ -203,7 +209,7 @@ public class GdxTest2 extends ApplicationAdapter {
         powerBar.draw(batch, powerPercent.getValue());
 
         font.draw(batch, "Last" + ROLLINGACCURACYINTERVAL + ": " + 3.4f + "%", WORLD_WIDTH - 30, WORLD_HEIGHT - 2);
-        font.draw(batch, shotsFired.stream().filter(shot -> shot.hit()).count() + "/" + shotsFired.size(), WORLD_WIDTH - 30, WORLD_HEIGHT - 5);
+        font.draw(batch, shotsFired.stream().filter(Shot::hit).count() + "/" + shotsFired.size(), WORLD_WIDTH - 30, WORLD_HEIGHT - 5);
 
         //debugSprite.draw(batch, target.getPosition());
 

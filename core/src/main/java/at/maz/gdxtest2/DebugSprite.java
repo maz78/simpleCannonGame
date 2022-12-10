@@ -6,9 +6,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
 public class DebugSprite {
-    private Vector2 DIMENSION = new Vector2(5.0f, 5.0f);
+    private final Vector2 DIMENSION = new Vector2(5.0f, 5.0f);
 
-    private Sprite sprite = new Sprite(new Texture("debugSprite.png"));
+    private final Sprite sprite = new Sprite(new Texture("debugSprite.png"));
 
 
     public void draw(SpriteBatch batch, Vector2 position) {
