@@ -16,9 +16,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Optional;
 
 /**
@@ -42,8 +41,9 @@ public class GdxTest2 extends ApplicationAdapter {
     private record Shot(float rotaion, float powerpercent, boolean hit) {
     }
 
-    private final List<Shot> shotsFired = new ArrayList<>();
+    private final LinkedList<Shot> shotsFired = new LinkedList<>();
     private final int ROLLINGACCURACYINTERVAL = 20;
+    private String rollingAccuracyPercent = "0.0";
 
     private World world;
     private Body floor;
@@ -62,8 +62,6 @@ public class GdxTest2 extends ApplicationAdapter {
 
     private float rotation = 45;
     private final PercentValue powerPercent = new PercentValue(60);
-    private final float powerPercentKeyRepeat = 0;
-    private final float rollingAccuracyPercent = 0;
 
     @Override
     public void create() {
@@ -122,7 +120,8 @@ public class GdxTest2 extends ApplicationAdapter {
         powerBar = new PowerBar(new Vector2(WORLD_WIDTH * 0.4f, WORLD_HEIGHT * 0.003f), WORLD_WIDTH * 0.2f);
 
         //Cloud
-        cloud = new Cloud(new Vector2(WORLD_WIDTH, WORLD_HEIGHT), batch);
+        if (cloud == null)
+            cloud = new Cloud(new Vector2(WORLD_WIDTH, WORLD_HEIGHT));
 
         Gdx.input.setInputProcessor(new InputAdapter() {
             @Override
@@ -159,6 +158,7 @@ public class GdxTest2 extends ApplicationAdapter {
             bullet.clear();
             bullet = null;
         }
+        calcRollingAccuracy();
     }
 
     @Override
@@ -178,14 +178,8 @@ public class GdxTest2 extends ApplicationAdapter {
 
         if (contactListener.isTargetHit()) {
             // Last shot is a hit, adapt list of shots.
-            ListIterator<Shot> listIterator = shotsFired.listIterator(shotsFired.size() - 1);
-            listIterator.next();
-            try {
-                listIterator.set(new Shot(11f, powerPercent.getValue(), true));
-            } catch (UnsupportedOperationException | ClassCastException | IllegalArgumentException |
-                     IllegalStateException e) {
-                System.err.println("Can't record hits on shots. " + e);
-            }
+            shotsFired.set(shotsFired.size() - 1, new Shot(shotsFired.get(shotsFired.size() - 1).rotaion, shotsFired.get(shotsFired.size() - 1).powerpercent, true));
+            calcRollingAccuracy();
 
             destroyBullet();
             target.clear();
@@ -194,6 +188,14 @@ public class GdxTest2 extends ApplicationAdapter {
         }
 
         batch.begin();
+        if (cloud != null) {
+            cloud.drawAndMove(batch);
+            if (cloud.getXPosition() < -1.5f * cloud.getXDimension())
+                cloud = null;
+        } else {
+            cloud = new Cloud(new Vector2(WORLD_WIDTH, WORLD_HEIGHT));
+        }
+
         if (target != null) {
             target.draw(batch);
         }
@@ -208,12 +210,24 @@ public class GdxTest2 extends ApplicationAdapter {
         cannon.draw(batch, rotation);
         powerBar.draw(batch, powerPercent.getValue());
 
-        font.draw(batch, "Last" + ROLLINGACCURACYINTERVAL + ": " + 3.4f + "%", WORLD_WIDTH - 30, WORLD_HEIGHT - 2);
+        font.draw(batch, "Last" + ROLLINGACCURACYINTERVAL + ": " + rollingAccuracyPercent + "%", WORLD_WIDTH - 30, WORLD_HEIGHT - 2);
         font.draw(batch, shotsFired.stream().filter(Shot::hit).count() + "/" + shotsFired.size(), WORLD_WIDTH - 30, WORLD_HEIGHT - 5);
 
         //debugSprite.draw(batch, target.getPosition());
 
         batch.end();
+    }
+
+    private void calcRollingAccuracy() {
+        // Calculate rolling accuracy
+        Iterator<Shot> reversedIt = new LinkedList<Shot>(shotsFired.subList(Math.max(0, shotsFired.size() - ROLLINGACCURACYINTERVAL), shotsFired.size())).descendingIterator();
+        int count = 0;
+        float rollingAcc = 0;
+        while (reversedIt.hasNext()) {
+            rollingAcc += (reversedIt.next()).hit ? 1 : 0;
+            count++;
+        }
+        rollingAccuracyPercent = String.format("%3.1f", (float) rollingAcc / (float) count * 100f);
     }
 
     @Override
