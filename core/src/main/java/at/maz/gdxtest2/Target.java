@@ -11,9 +11,9 @@ import java.util.Random;
 public class Target {
     private final World world;
     private final Body target;
-    private final Sprite sprite = new Sprite(new Texture("target.png"));
+    private final Sprite sprite = new Sprite(new Texture("bird.png"));
 
-    private final float WIDTH = 1.8f;
+    private static final float WIDTH = 1.8f;
     private final float HEIGHT = 6f;
 
     // Center point is used as origin
@@ -21,17 +21,17 @@ public class Target {
 
     public enum TargetPosition {
         // No random y-value for target, but distinct positions to make it easier for AI.
-        POS0(new Vector2(0, 5)),
-        POS1(new Vector2(0, 12)),
-        POS2(new Vector2(0, 19)),
-        POS3(new Vector2(0, 26)),
-        POS4(new Vector2(0, 33)),
-        POS5(new Vector2(0, 40)),
-        POS6(new Vector2(0, 47)),
-        POS7(new Vector2(0, 54)),
-        POS8(new Vector2(0, 61)),
-        POS9(new Vector2(0, 68)),
-        POS10(new Vector2(0, 75));
+        POS0(new Vector2(WIDTH / 2, 5)),
+        POS1(new Vector2(WIDTH / 2, 12)),
+        POS2(new Vector2(WIDTH / 2, 19)),
+        POS3(new Vector2(WIDTH / 2, 26)),
+        POS4(new Vector2(WIDTH / 2, 33)),
+        POS5(new Vector2(WIDTH / 2, 40)),
+        POS6(new Vector2(WIDTH / 2, 47)),
+        POS7(new Vector2(WIDTH / 2, 54)),
+        POS8(new Vector2(WIDTH / 2, 61)),
+        POS9(new Vector2(WIDTH / 2, 68)),
+        POS10(new Vector2(WIDTH / 2, 75));
 
         private final Vector2 pos;
 
