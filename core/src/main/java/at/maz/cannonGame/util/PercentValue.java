@@ -1,4 +1,4 @@
-package at.maz.gdxtest2.util;
+package at.maz.cannongame.util;
 
 public class PercentValue {
     private float value;

@@ -1,4 +1,4 @@
-package at.maz.gdxtest2;
+package at.maz.cannongame;
 
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Vector2;

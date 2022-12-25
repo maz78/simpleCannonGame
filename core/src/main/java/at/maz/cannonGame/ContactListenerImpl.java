@@ -1,4 +1,4 @@
-package at.maz.gdxtest2;
+package at.maz.cannongame;
 
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;

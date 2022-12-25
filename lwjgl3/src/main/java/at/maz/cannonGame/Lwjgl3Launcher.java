@@ -1,4 +1,4 @@
-package at.maz.gdxtest2;
+package at.maz.cannongame;
 
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
@@ -15,12 +15,12 @@ public class Lwjgl3Launcher {
     }
 
     private static void createApplication() {
-        new Lwjgl3Application(new GdxTest2(), getDefaultConfiguration());
+        new Lwjgl3Application(new CannonGame(), getDefaultConfiguration());
     }
 
     private static Lwjgl3ApplicationConfiguration getDefaultConfiguration() {
         Lwjgl3ApplicationConfiguration configuration = new Lwjgl3ApplicationConfiguration();
-        configuration.setTitle("gdxTest2");
+        configuration.setTitle("CannonGame");
         configuration.useVsync(true);
         //// Limits FPS to the refresh rate of the currently active monitor.
         configuration.setForegroundFPS(Lwjgl3ApplicationConfiguration.getDisplayMode().refreshRate);

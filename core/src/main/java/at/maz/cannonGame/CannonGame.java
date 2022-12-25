@@ -1,6 +1,6 @@
-package at.maz.gdxtest2;
+package at.maz.cannongame;
 
-import at.maz.gdxtest2.util.PercentValue;
+import at.maz.cannongame.util.PercentValue;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -23,7 +23,7 @@ import java.util.Optional;
 /**
  * {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms.
  */
-public class GdxTest2 extends ApplicationAdapter {
+public class CannonGame extends ApplicationAdapter {
     private SpriteBatch batch;
     private Box2DDebugRenderer renderer;
     private OrthographicCamera camera;
@@ -73,7 +73,7 @@ public class GdxTest2 extends ApplicationAdapter {
         batch = new SpriteBatch();
         batch.setProjectionMatrix(camera.combined);
         renderer = new Box2DDebugRenderer();
-        world = new World(new Vector2(0, -10), true);
+        world = new World(new Vector2(0, -10), false);
         this.contactListener = new ContactListenerImpl();
         world.setContactListener(contactListener);
         font = new BitmapFont(Gdx.files.internal("gjFont02-hd.fnt"), Gdx.files.internal("gjFont02-hd.png"), false);
@@ -85,7 +85,7 @@ public class GdxTest2 extends ApplicationAdapter {
         debugSprite = new DebugSprite();
 
         // Floor
-        BodyEditorLoader bodyEditorLoader = new BodyEditorLoader(new FileHandle("assets/gdxTest2.json"));
+        BodyEditorLoader bodyEditorLoader = new BodyEditorLoader(new FileHandle("assets/cannongame.json"));
         floorSprite = new Sprite(new Texture("floor.png"));
         BodyDef bd = new BodyDef();
         bd.type = BodyDef.BodyType.StaticBody;

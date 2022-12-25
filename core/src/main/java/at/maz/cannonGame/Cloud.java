@@ -1,4 +1,4 @@
-package at.maz.gdxtest2;
+package at.maz.cannongame;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
