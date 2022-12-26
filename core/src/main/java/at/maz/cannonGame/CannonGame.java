@@ -38,7 +38,7 @@ public class CannonGame extends ApplicationAdapter {
     // Clicks per second
     private final float KEYPRESSED_CLICKSPEED = 22f;
 
-    private record Shot(float rotaion, float powerpercent, boolean hit) {
+    private record Shot(float rotaion, float powerpercent, boolean hit, Target.TargetPosition targetPosition) {
     }
 
     private final LinkedList<Shot> shotsFired = new LinkedList<>();
@@ -150,7 +150,7 @@ public class CannonGame extends ApplicationAdapter {
     private void createNewBullet() {
         destroyBullet();
         bullet = new Bullet(world, cannon.getTopPosition(), cannon.getShootingDirection().scl(0.28f * (45 + powerPercent.getValue() * 0.45f)));
-        shotsFired.add(new Shot(rotation, powerPercent.getValue(), false));
+        shotsFired.add(new Shot(rotation, powerPercent.getValue(), false, target != null ? target.getPosition() : Target.TargetPosition.UNDEFINED));
     }
 
     private void destroyBullet() {
@@ -178,7 +178,7 @@ public class CannonGame extends ApplicationAdapter {
 
         if (contactListener.isTargetHit()) {
             // Last shot is a hit, adapt list of shots.
-            shotsFired.set(shotsFired.size() - 1, new Shot(shotsFired.get(shotsFired.size() - 1).rotaion, shotsFired.get(shotsFired.size() - 1).powerpercent, true));
+            shotsFired.set(shotsFired.size() - 1, new Shot(shotsFired.get(shotsFired.size() - 1).rotaion, shotsFired.get(shotsFired.size() - 1).powerpercent, true, shotsFired.get(shotsFired.size() - 1).targetPosition));
             calcRollingAccuracy();
 
             destroyBullet();

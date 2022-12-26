@@ -21,17 +21,18 @@ public class Target {
 
     public enum TargetPosition {
         // No random y-value for target, but distinct positions to make it easier for AI.
-        POS0(new Vector2(WIDTH / 2, 5)),
-        POS1(new Vector2(WIDTH / 2, 12)),
-        POS2(new Vector2(WIDTH / 2, 19)),
-        POS3(new Vector2(WIDTH / 2, 26)),
-        POS4(new Vector2(WIDTH / 2, 33)),
-        POS5(new Vector2(WIDTH / 2, 40)),
-        POS6(new Vector2(WIDTH / 2, 47)),
-        POS7(new Vector2(WIDTH / 2, 54)),
-        POS8(new Vector2(WIDTH / 2, 61)),
-        POS9(new Vector2(WIDTH / 2, 68)),
-        POS10(new Vector2(WIDTH / 2, 75));
+        UNDEFINED(new Vector2(Vector2.Zero)),
+        POS1(new Vector2(WIDTH / 2, 5)),
+        POS2(new Vector2(WIDTH / 2, 12)),
+        POS3(new Vector2(WIDTH / 2, 19)),
+        POS4(new Vector2(WIDTH / 2, 26)),
+        POS5(new Vector2(WIDTH / 2, 33)),
+        POS6(new Vector2(WIDTH / 2, 40)),
+        POS7(new Vector2(WIDTH / 2, 47)),
+        POS8(new Vector2(WIDTH / 2, 54)),
+        POS9(new Vector2(WIDTH / 2, 61)),
+        POS10(new Vector2(WIDTH / 2, 68)),
+        POS11(new Vector2(WIDTH / 2, 75));
 
         private final Vector2 pos;
 
@@ -44,7 +45,7 @@ public class Target {
         this.world = world;
         BodyDef bd = new BodyDef();
         bd.type = BodyDef.BodyType.StaticBody;
-        position = TargetPosition.values()[new Random().nextInt(TargetPosition.values().length)];
+        position = TargetPosition.values()[new Random().nextInt(TargetPosition.values().length - 1) + 1];
         bd.position.set(position.pos.x, position.pos.y);
         target = world.createBody(bd);
         target.setUserData(this);
@@ -59,11 +60,11 @@ public class Target {
     }
 
     public void draw(SpriteBatch batch) {
-        batch.draw(sprite, this.getPosition().x - WIDTH / 2, this.getPosition().y - HEIGHT / 2, WIDTH, HEIGHT);
+        batch.draw(sprite, this.getPosition().pos.x - WIDTH / 2, this.getPosition().pos.y - HEIGHT / 2, WIDTH, HEIGHT);
     }
 
-    public Vector2 getPosition() {
-        return position.pos;
+    public TargetPosition getPosition() {
+        return position;
     }
 
     public void clear() {
