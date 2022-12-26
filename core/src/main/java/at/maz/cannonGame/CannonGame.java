@@ -19,6 +19,7 @@ import com.badlogic.gdx.physics.box2d.*;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Optional;
+import java.util.Random;
 
 /**
  * {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms.
@@ -44,6 +45,10 @@ public class CannonGame extends ApplicationAdapter {
     private final LinkedList<Shot> shotsFired = new LinkedList<>();
     private final int ROLLINGACCURACYINTERVAL = 20;
     private String rollingAccuracyPercent = "0.0";
+    private FileHandle shotsDataCSV;
+    private boolean randomAutoMode = false;
+    private int MAXSECBETWEENSHOTS = 10;
+    private float timeSinceLastShot = 0;
 
     private World world;
     private Body floor;
@@ -132,6 +137,11 @@ public class CannonGame extends ApplicationAdapter {
                     case Input.Keys.UP -> loadingPower = Optional.of(true);
                     case Input.Keys.DOWN -> loadingPower = Optional.of(false);
                     case Input.Keys.SPACE -> createNewBullet();
+
+                    case Input.Keys.ESCAPE -> Gdx.app.exit();
+
+                    case Input.Keys.S -> saveShotsDataToCSV();
+                    case Input.Keys.R -> randomAutoMode = !randomAutoMode;
                 }
                 return true;
             }
@@ -151,9 +161,11 @@ public class CannonGame extends ApplicationAdapter {
         destroyBullet();
         bullet = new Bullet(world, cannon.getTopPosition(), cannon.getShootingDirection().scl(0.28f * (45 + powerPercent.getValue() * 0.45f)));
         shotsFired.add(new Shot(rotation, powerPercent.getValue(), false, target != null ? target.getPosition() : Target.TargetPosition.UNDEFINED));
+        timeSinceLastShot = 0;
     }
 
     private void destroyBullet() {
+        timeSinceLastShot = 0;
         if (bullet != null) {
             bullet.clear();
             bullet = null;
@@ -169,8 +181,8 @@ public class CannonGame extends ApplicationAdapter {
         world.step(Gdx.graphics.getDeltaTime(), 6, 2);
         renderer.render(world, camera.combined);
 
-        rotating.ifPresent(bool -> rotation += (bool ? rotation <= 90f ? +0.5f : 0 : rotation >= -20 ? -0.5f : 0));
-        loadingPower.ifPresent(bool -> powerPercent.inc(bool ? Gdx.graphics.getDeltaTime() * KEYPRESSED_CLICKSPEED : Gdx.graphics.getDeltaTime() * -KEYPRESSED_CLICKSPEED));
+        rotating.ifPresent(bool -> rotation += (bool ? rotation <= 90f ? +0.5f : 0 : rotation >= -20f ? -0.5f : 0));
+        loadingPower.ifPresent(bool -> powerPercent.incDec(bool ? Gdx.graphics.getDeltaTime() * KEYPRESSED_CLICKSPEED : Gdx.graphics.getDeltaTime() * -KEYPRESSED_CLICKSPEED));
 
         if (target == null) {
             target = new Target(world);
@@ -203,6 +215,7 @@ public class CannonGame extends ApplicationAdapter {
         batch.draw(wallSprite, wall.getPosition().x - 2, wall.getPosition().y - 15, 4, 30);
         if (bullet != null) {
             bullet.draw(batch);
+            timeSinceLastShot += Gdx.graphics.getDeltaTime();
         }
         if (bullet != null && (bullet.getPosition().x > WORLD_WIDTH || bullet.getPosition().x < 0 || bullet.getPosition().y < 0))
             destroyBullet();
@@ -212,6 +225,14 @@ public class CannonGame extends ApplicationAdapter {
 
         font.draw(batch, "Last" + ROLLINGACCURACYINTERVAL + ": " + rollingAccuracyPercent + "%", WORLD_WIDTH - 30, WORLD_HEIGHT - 2);
         font.draw(batch, shotsFired.stream().filter(Shot::hit).count() + "/" + shotsFired.size(), WORLD_WIDTH - 30, WORLD_HEIGHT - 5);
+
+        if (randomAutoMode && (bullet == null || timeSinceLastShot >= MAXSECBETWEENSHOTS)) {
+            rotation = (float) new Random().nextInt(221) / 2f - 20;
+            powerPercent.setValue((float) new Random().nextInt(201) / 2f);
+            cannon.draw(batch, rotation);
+            powerBar.draw(batch, powerPercent.getValue());
+            createNewBullet();
+        }
 
         //debugSprite.draw(batch, target.getPosition());
 
@@ -228,6 +249,13 @@ public class CannonGame extends ApplicationAdapter {
             count++;
         }
         rollingAccuracyPercent = String.format("%3.1f", (float) rollingAcc / (float) count * 100f);
+    }
+
+    private void saveShotsDataToCSV() {
+        Gdx.app.log("", "Saving CSV data.");
+        shotsDataCSV = Gdx.files.local("shotsData.csv");
+        shotsDataCSV.writeString("ROTATION,POWER,HIT,TARGET_POS\r\n", false);
+        shotsFired.forEach(shot -> shotsDataCSV.writeString(shot.rotaion + "," + shot.powerpercent + "," + shot.hit + "," + shot.targetPosition + "\r\n", true));
     }
 
     @Override
